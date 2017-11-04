@@ -35,6 +35,12 @@ object Main {
 
   }
 
+  /**
+    * Reads input folders with publishers and documents and converts to publisher list of document strings
+    *
+    * @param dataset dataset utils
+    * @return an array of (publisherName, List(doc1,doc2,doc3...))
+    */
   def readInputDataSet(dataset: Dataset): Array[(String,List[String])] = {
     val dirs = dataset.getListOfSubDirectories
     for {
