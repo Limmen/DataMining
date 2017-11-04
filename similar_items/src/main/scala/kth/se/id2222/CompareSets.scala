@@ -9,5 +9,9 @@ import scala.collection.immutable.SortedSet
  */
 object CompareSets {
 
-  def jaccardSimilarity(set1: SortedSet[Int], set2: SortedSet[Int]): Double = ???
+  def apply(set1: SortedSet[Int], set2: SortedSet[Int]): Double = {
+    val intersect = set1.intersect(set2).size
+    val union = set1.union(set2).size
+    intersect/union
+  }
 }

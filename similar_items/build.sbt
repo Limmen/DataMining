@@ -10,6 +10,7 @@ lazy val root = (project in file(".")).
     name := "similar_items",
     libraryDependencies ++= Seq(
       scalaTest,
-      mockito
+      mockito,
+      guava
     )
   )
