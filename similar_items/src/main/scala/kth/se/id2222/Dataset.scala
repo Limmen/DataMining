@@ -22,10 +22,10 @@ final case class Dataset(inputPath: String) {
     }
   }
 
-  def readFiles(paths: List[String]): List[String] = {
+  def readFiles(paths: List[String]): List[(String, String)] = {
     for {
       path <- paths
-    } yield Source.fromFile(path, "ISO-8859-1").getLines.mkString
+    } yield (path, Source.fromFile(path, "ISO-8859-1").getLines.mkString)
   }
 
 }

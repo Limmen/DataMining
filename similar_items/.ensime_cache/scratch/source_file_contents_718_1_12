@@ -1,35 +1,84 @@
 package kth.se.id2222
 
-import scala.collection.mutable.{HashMap, Set, MultiMap}
-
-
+import com.madhukaraphatak.sizeof.SizeEstimator
+import scala.collection.immutable.SortedSet
+import scala.util.Random
 /*
- * A class LSH that implements the LSH technique:
- * given a collection of minhash signatures (integer vectors)
- * and a similarity threshold t, the LSH class (using banding and hashing)
- * finds all candidate pairs of signatures that agree on
- * at least fraction t of their components.
+ * You are to implement the stages of finding textually similar
+ * documents based on Jaccard similarity using the shingling,
+ * minhashing, and locality-sensitive hashing (LSH)
+ * techniques and corresponding algorithms.
  */
-object LSH {
+object Main {
+  val random = new Random()
+  val k = 5 //Shingle length
+  val largePrime = 15485863 //High prime
+  val a = 3 //factor
+  val hashFun = (s: String) => s.hashCode //String hashfun for compression, dont care about buckets.
+  val n = 100 //MinhashSignatureLength
+  val b = 25 //bands
+  val t = 0.2 //threshold
+  val InputDatasetPath = "src/resources/mini_newsgroups"
 
-  def apply(signatures: List[(String, Vector[Int])], r: Int, b: Int): Set[((String, Vector[Int]), (String, Vector[Int]))] = {
-    assert(r*b == signatures(0)._2.length)
-    val buckets = new HashMap[Int, Set[(String, Vector[Int])]] with MultiMap[Int, (String, Vector[Int])]
-    signatures.foreach((sign) => {
-      val bands = sign._2.sliding(r, 1).toList
-      bands.foreach(b => buckets.addBinding(b.hashCode, sign))
-    })
+  def main(args: Array[String]) {
+    val start = System.nanoTime()
+    val dataset = Dataset(InputDatasetPath)
+    val data = readInputDataSet(dataset).map {
+      case (publisher, articles) =>
+        (publisher, dataset.readFiles(articles))
+    }
+    val shingledData = data.map {
+      case (publisher, docs) =>
+        (publisher, docs.map(doc => Shingling(k, hashFun, doc)))
+    }
+    println(s"Shingles size: ${SizeEstimator.estimate(shingledData)} bytes")
+    val signatures = MinHashing(n, shingledData)
+    println(s"Size after minhashing: ${SizeEstimator.estimate(signatures)} bytes")
+    println(s"Number of minhashes: ${signatures.size}")
+    println(s"Number of candidates pre LSH is approx: ${Math.pow(signatures.size.toDouble,2)}")
+    val candidates = LSH(signatures, n/b, b)
+    println(s"Number of candidates after LSH: ${candidates.size}")
+    println(s"Size after LSH: ${SizeEstimator.estimate(candidates)} bytes")
+    val similarItems = candidates.toList.map((pair) => (pair._1, pair._2, CompareSignatures(pair._1._2, pair._2._2))).filter((triple) => triple._3 >= t)
+    println(s"Similar items: ${similarItems.size}")
+    val end = System.nanoTime()
+    val elapsedTime = end - start
+    val elapsedSeconds = elapsedTime/1000000000.0
+    evaluate(similarItems, elapsedSeconds.toDouble)
+  }
 
-    buckets.foldLeft(Set[((String, Vector[Int]), (String, Vector[Int]))]())((acc, bucket) => {
-      val pairs = for(x <- bucket._2.toList; y <- bucket._2.toList if(!x.equals(y))) yield (x, y)
-      val pairs2 = pairs.foldLeft(Set[((String, Vector[Int]), (String, Vector[Int]))]())((acc, pair) => {
-        if(!acc.contains((pair)) && !acc.contains((pair._2, pair._1)))
-          acc + pair
-        else
-          acc
-      })
-      acc ++ pairs2.toSet
-    })
+  /**
+   * Reads input folders with publishers and documents and converts to publisher list of document strings
+   *
+   * @param dataset dataset utils
+   * @return an array of (publisherName, List(doc1,doc2,doc3...))
+   */
+  def readInputDataSet(dataset: Dataset): Array[(String, List[String])] = {
+    val dirs = dataset.getListOfSubDirectories
+    for {
+      dir <- dirs
+    } yield dir.split("/").last -> dataset.getListOfFiles(dir).map(_.toString)
+  }
+
+  /**
+    * Some final evaluation statistics
+    */
+  def evaluate(similarItems: List[((String, Vector[Int]), (String, Vector[Int]), Double)], elapsedTime: Double): Unit = {
+    similarItems.foreach((pair) => println(s"Similar pair: (${pair._1._1} and ${pair._2._1.substring(0, 15)}), similarity: ${pair._3}"))
+    println(s"Time to compute similar items: ${elapsedTime} seconds, number of similar items found: ${similarItems.length}")
+  }
+
+/**1
+  * Generates random hash function for row permutation for minhashing.
+  * Uses the universal hashing scheme from the coursebook.
+  * Universal hashing: h(x) = ((a*x + b) mod p) mod N where a,b are random integers,
+  * p is a large prime number > N, and N is the number of buckets.
+  *
+  */
+  def universalHashing(n: Int) = {
+    val a = random.nextInt(1000)
+    val b = random.nextInt(1000)
+    (x: Int) => ((a * x + b) % largePrime) % n
   }
 
 }

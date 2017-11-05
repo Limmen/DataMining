@@ -1,53 +1,84 @@
 package kth.se.id2222
 
+import com.madhukaraphatak.sizeof.SizeEstimator
 import scala.collection.immutable.SortedSet
-
+import scala.util.Random
 /*
- * A class MinHashing that builds a minHash signature
- * (in the form of a vector or a set) of a given
- * length n from a given set of integers (a set of hashed shingles).
+ * You are to implement the stages of finding textually similar
+ * documents based on Jaccard similarity using the shingling,
+ * minhashing, and locality-sensitive hashing (LSH)
+ * techniques and corresponding algorithms.
  */
-object MinHashing {
+object Main {
+  val random = new Random()
+  val k = 5 //Shingle length
+  val largePrime = 15485863 //High prime
+  val a = 3 //factor
+  val hashFun = (s: String) => s.hashCode //String hashfun for compression, dont care about buckets.
+  val n = 100 //MinhashSignatureLength
+  val b = 25 //bands
+  val t = 0.2 //threshold
+  val InputDatasetPath = "src/resources/mini_newsgroups"
 
-  def apply(n: Int, shingledData: Array[(String, List[(String, SortedSet[Int])])]): List[(String, Vector[Int])] = {
-    val rows = shingledData.map {
-      case (publisher, shingledDocs) =>
-        shingledDocs.flatten {
-          case (document, shingles) =>
-            shingles
-        }
-    }.flatten.distinct
+  def main(args: Array[String]) {
+    val start = System.nanoTime()
+    val dataset = Dataset(InputDatasetPath)
+    val data = readInputDataSet(dataset).map {
+      case (publisher, articles) =>
+        (publisher, dataset.readFiles(articles))
+    }
+    val shingledData = data.map {
+      case (publisher, docs) =>
+        (publisher, docs.map(doc => Shingling(k, hashFun, doc)))
+    }
+    println(s"Shingles size: ${SizeEstimator.estimate(shingledData)} bytes")
+    val signatures = MinHashing(n, shingledData)
+    println(s"Size after minhashing: ${SizeEstimator.estimate(signatures)} bytes")
+    println(s"Number of minhashes: ${signatures.size}")
+    println(s"Number of candidates pre LSH is approx: ${Math.pow(signatures.size.toDouble,2)}")
+    val candidates = LSH(signatures, n/b, b)
+    println(s"Number of candidates after LSH: ${candidates.size}")
+    println(s"Size after LSH: ${SizeEstimator.estimate(candidates)} bytes")
+    val similarItems = candidates.toList.map((pair) => (pair._1, pair._2, CompareSignatures(pair._1._2, pair._2._2))).filter((triple) => triple._3 >= t)
+    println(s"Similar items: ${similarItems.size}")
+    val end = System.nanoTime()
+    val elapsedTime = end - start
+    val elapsedSeconds = elapsedTime/1000000000.0
+    evaluate(similarItems, elapsedSeconds.toDouble)
+  }
 
-    println(s"Number of rows: ${rows.size}")
+  /**
+   * Reads input folders with publishers and documents and converts to publisher list of document strings
+   *
+   * @param dataset dataset utils
+   * @return an array of (publisherName, List(doc1,doc2,doc3...))
+   */
+  def readInputDataSet(dataset: Dataset): Array[(String, List[String])] = {
+    val dirs = dataset.getListOfSubDirectories
+    for {
+      dir <- dirs
+    } yield dir.split("/").last -> dataset.getListOfFiles(dir).map(_.toString)
+  }
 
-    val columns = shingledData.map {
-      case (publisher, shingledDocs) =>
-        shingledDocs
-    }.flatten
+  /**
+    * Some final evaluation statistics
+    */
+  def evaluate(similarItems: List[((String, Vector[Int]), (String, Vector[Int]), Double)], elapsedTime: Double): Unit = {
+    similarItems.foreach((pair) => println(s"Similar pair: (\n ${pair._1._1} \n ${pair._2._1.substring(0, 15)}), similarity: ${pair._3}"))
+    println(s"Time to compute similar items: ${elapsedTime} seconds, number of similar items found: ${similarItems.length}")
+  }
 
-    val hashFuns = (0 to n - 1).map((_) => Main.universalHashing(rows.size - 1)).toList
-
-    val placeHolderMatrix = Array.tabulate(n, columns.size)((x, y) => Integer.MAX_VALUE)
-
-    (0 to rows.size - 1).map((i) => {
-      val rowHashes = hashFuns.map(h => h(i))
-      (0 to columns.size - 1).map((j) => {
-        val col = columns(j)
-        if (col._2.contains(rows(i))) {
-          (0 to n - 1).map(k => {
-              if (rowHashes(k) < placeHolderMatrix(k)(j)) {
-                placeHolderMatrix(k)(j) = rowHashes(k)
-              }
-          })
-        }
-      })
-    })
-
-    (0 to columns.size - 1).map((i) => {
-      val col = columns(i)
-      val minhash = (0 to placeHolderMatrix.length - 1).map((j) => placeHolderMatrix(j)(i)).toVector
-      (col._1, minhash)
-    }).toList
+/**1
+  * Generates random hash function for row permutation for minhashing.
+  * Uses the universal hashing scheme from the coursebook.
+  * Universal hashing: h(x) = ((a*x + b) mod p) mod N where a,b are random integers,
+  * p is a large prime number > N, and N is the number of buckets.
+  *
+  */
+  def universalHashing(n: Int) = {
+    val a = random.nextInt(1000)
+    val b = random.nextInt(1000)
+    (x: Int) => ((a * x + b) % largePrime) % n
   }
 
 }

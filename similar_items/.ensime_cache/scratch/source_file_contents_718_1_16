@@ -11,13 +11,13 @@ import scala.util.Random
  */
 object Main {
   val random = new Random()
-  val k = 10 //Shingle length
+  val k = 5 //Shingle length
   val largePrime = 15485863 //High prime
   val a = 3 //factor
   val hashFun = (s: String) => s.hashCode //String hashfun for compression, dont care about buckets.
   val n = 100 //MinhashSignatureLength
-  val b = 20 //bands
-  val t = 0.5 //threshold
+  val b = 25 //bands
+  val t = 0.2 //threshold
   val InputDatasetPath = "src/resources/mini_newsgroups"
 
   def main(args: Array[String]) {
@@ -27,7 +27,7 @@ object Main {
       case (publisher, articles) =>
         (publisher, dataset.readFiles(articles))
     }
-    val shingledData: Array[(String, List[(String, SortedSet[Int])])] = data.map {
+    val shingledData = data.map {
       case (publisher, docs) =>
         (publisher, docs.map(doc => Shingling(k, hashFun, doc)))
     }
@@ -39,7 +39,7 @@ object Main {
     val candidates = LSH(signatures, n/b, b)
     println(s"Number of candidates after LSH: ${candidates.size}")
     println(s"Size after LSH: ${SizeEstimator.estimate(candidates)} bytes")
-    val similarItems = candidates.toList.map((pair) => (pair._1, pair._2, CompareSignatures(pair._1._2, pair._2._2))).filter((triple) => triple._3 > t)
+    val similarItems = candidates.toList.map((pair) => (pair._1, pair._2, CompareSignatures(pair._1._2, pair._2._2))).filter((triple) => triple._3 >= t)
     println(s"Similar items: ${similarItems.size}")
     val end = System.nanoTime()
     val elapsedTime = end - start
@@ -64,7 +64,7 @@ object Main {
     * Some final evaluation statistics
     */
   def evaluate(similarItems: List[((String, Vector[Int]), (String, Vector[Int]), Double)], elapsedTime: Double): Unit = {
-    similarItems.foreach((pair) => println(s"Similar pair: (${pair._1._1.substring(0, 15)} and ${pair._2._1.substring(0, 15)}), similarity: ${pair._3}"))
+    similarItems.foreach((pair) => println(s"Similar pair: \n(${pair._1._1} \n and ${pair._2._1.substring(0, 15)}), similarity: ${pair._3}"))
     println(s"Time to compute similar items: ${elapsedTime} seconds, number of similar items found: ${similarItems.length}")
   }
 

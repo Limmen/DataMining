@@ -27,7 +27,7 @@ object Main {
       case (publisher, articles) =>
         (publisher, dataset.readFiles(articles))
     }
-    val shingledData: Array[(String, List[(String, SortedSet[Int])])] = data.map {
+    val shingledData = data.map {
       case (publisher, docs) =>
         (publisher, docs.map(doc => Shingling(k, hashFun, doc)))
     }
@@ -64,7 +64,7 @@ object Main {
     * Some final evaluation statistics
     */
   def evaluate(similarItems: List[((String, Vector[Int]), (String, Vector[Int]), Double)], elapsedTime: Double): Unit = {
-    similarItems.foreach((pair) => println(s"Similar pair: (${pair._1._1.substring(0, 15)} and ${pair._2._1.substring(0, 15)}), similarity: ${pair._3}"))
+    similarItems.foreach((pair) => println(s"Similar pair: (${pair._1._1} and ${pair._2._1.substring(0, 15)}), similarity: ${pair._3}"))
     println(s"Time to compute similar items: ${elapsedTime} seconds, number of similar items found: ${similarItems.length}")
   }
 
