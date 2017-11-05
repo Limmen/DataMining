@@ -9,6 +9,43 @@ import scala.collection.immutable.SortedSet
  */
 object MinHashing {
 
-  def minHash(n: Int, set: SortedSet[Int]): Vector[Int] = ???
+  def apply(n: Int, shingledData: Array[(String, List[(String, SortedSet[Int])])]): List[(String, Vector[Int])] = {
+    val rows = shingledData.map {
+      case (publisher, shingledDocs) =>
+        shingledDocs.flatten {
+          case (document, shingles) =>
+            shingles
+        }
+    }.flatten.distinct
+
+    val columns = shingledData.map {
+      case (publisher, shingledDocs) =>
+        shingledDocs
+    }.flatten
+
+    val hashFuns = (0 to n - 1).map((_) => Main.universalHashing(rows.size - 1)).toList
+
+    val placeHolderMatrix = Array.tabulate(n, columns.size)((x, y) => Integer.MAX_VALUE)
+
+    (0 to rows.size - 1).map((i) => {
+      val rowHashes = hashFuns.map(h => h(i))
+      (0 to columns.size - 1).map((j) => {
+        val col = columns(j)
+        if (col._2.contains(rows(i))) {
+          (0 to n - 1).map(k => {
+              if (rowHashes(k) < placeHolderMatrix(k)(j)) {
+                placeHolderMatrix(k)(j) = rowHashes(k)
+              }
+          })
+        }
+      })
+    })
+
+    (0 to columns.size - 1).map((i) => {
+      val col = columns(i)
+      val minhash = (0 to placeHolderMatrix.length - 1).map((j) => placeHolderMatrix(j)(i)).toVector
+      (col._1, minhash)
+    }).toList
+  }
 
 }

@@ -9,6 +9,7 @@ package kth.se.id2222
  */
 object LSH {
 
-  def candidates(signatures: List[Vector[Int]], t: Double): Set[Pair[Vector[Int], Vector[Int]]] = ???
+  def apply(signatures: List[Vector[Int]], t: Double, r: Int, b: Int): Set[(Vector[Int], Vector[Int])] = ???
+
 
 }

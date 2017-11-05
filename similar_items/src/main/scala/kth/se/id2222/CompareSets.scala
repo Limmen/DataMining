@@ -12,6 +12,6 @@ object CompareSets {
   def apply(set1: SortedSet[Int], set2: SortedSet[Int]): Double = {
     val intersect = set1.intersect(set2).size
     val union = set1.union(set2).size
-    intersect/union
+    intersect.toDouble/union.toDouble
   }
 }

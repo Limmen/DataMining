@@ -1,0 +1,52 @@
+package kth.se.id2222
+
+import scala.collection.immutable.SortedSet
+
+/*
+ * A class MinHashing that builds a minHash signature
+ * (in the form of a vector or a set) of a given
+ * length n from a given set of integers (a set of hashed shingles).
+ */
+object MinHashing {
+
+  def apply(n: Int, shingledData: Array[(String, List[(String, SortedSet[Int])])]): List[(String, Vector[Int])] = {
+    val rows = shingledData.map {
+      case (publisher, shingledDocs) =>
+        shingledDocs.flatten {
+          case (document, shingles) =>
+            shingles
+        }
+    }.flatten.distinct
+
+    val columns = shingledData.map {
+      case (publisher, shingledDocs) =>
+        shingledDocs
+    }.flatten
+
+    val hashFuns = (0 to n-1).map((_) => Main.universalHashing(rows.size)).toList
+    val placeHolderMatrix = Array.tabulate(rows.size, columns.size)((x, y) => Integer.MAX_VALUE)
+    //placeHolderMatrix.map(row => row.map(e => println(e)))
+    (0 to placeHolderMatrix.length-1).map(i => (0 to columns.size-1).map(j => println(s"$i: ${placeHolderMatrix(i)(j)}")))
+      (0 to rows.size - 1).map((i) => {
+        val rowHashes = hashFuns.map(h => h(rows(i)))
+      (0 to columns.size - 1).map((j) => {
+        val col = columns(j)
+        if (col._2.contains(rows(i))) {
+          rowHashes.foreach((hash) => {
+           // println(s"i: $i j: $j , hash $hash and matrixVal: ${placeHolderMatrix(i)(j)}")
+            if (hash < placeHolderMatrix(i)(j)) {
+              placeHolderMatrix(i)(j) = hash
+            }
+          })
+        }
+      })
+    })
+
+    (0 to columns.size-1).map((i) => {
+      val col = columns(i)
+      val minhash = (0 to placeHolderMatrix.length-1).map((j) => placeHolderMatrix(j)(i)).toVector
+      (col._1, minhash)
+    }).toList
+  }
+
+}

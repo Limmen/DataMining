@@ -11,6 +11,8 @@ lazy val root = (project in file(".")).
     libraryDependencies ++= Seq(
       scalaTest,
       mockito,
-      guava
-    )
+      guava,
+      sizeof
+    ),
+    scalacOptions := Seq("-unchecked", "-deprecation")
   )

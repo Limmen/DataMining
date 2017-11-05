@@ -8,6 +8,15 @@ package kth.se.id2222
  */
 object CompareSignatures {
 
-  def compare(sign1: Vector[Int], sign2: Vector[Int]): Double = ???
+  def apply(sign1: Vector[Int], sign2: Vector[Int]): Double = {
+    assert(sign1.length == sign2.length)
+    var i = 0
+    var rowMatch = 0
+    for(i <- (0 to sign1.length-1)){
+      if(sign1(i) == sign2(i))
+        rowMatch += 1
+    }
+    rowMatch.toDouble/sign1.length.toDouble
+  }
 
 }

@@ -1,0 +1,25 @@
+package kth.se.id2222
+
+import scala.collection.immutable.SortedSet
+
+/*
+ * A class MinHashing that builds a minHash signature
+ * (in the form of a vector or a set) of a given
+ * length n from a given set of integers (a set of hashed shingles).
+ */
+object MinHashing {
+
+  def minHash(n: Int, shingledData: Array[(String, List[(String, SortedSet[Int])])]): Vector[Int] = {
+    val shingleSet = shingledData.map {
+      case (publisher, shingledDocs) =>
+        shingledDocs.flatten {
+          case (document, shingles) =>
+            shingles
+        }
+    }.flatten.toSet
+    val hashFuns = shingleSet.map((shingle) => Main.universalHashing(shingleSet.size)).toList
+    val placeHolderMatrix =  Array.ofDim[Int](100, sh)
+    Vector()
+  }
+
+}
