@@ -13,7 +13,7 @@ import scala.collection.mutable.{HashMap, Set, MultiMap}
 object LSH {
 
   def apply(signatures: List[(String, Vector[Int])], r: Int, b: Int): Set[((String, Vector[Int]), (String, Vector[Int]))] = {
-    assert(r*b == signatures.head._2.length
+    assert(r*b == signatures.head._2.length)
     val buckets = new HashMap[Int, Set[(String, Vector[Int])]] with MultiMap[Int, (String, Vector[Int])]
     signatures.foreach((sign) => {
       val bands = sign._2.sliding(r, 1).toList
