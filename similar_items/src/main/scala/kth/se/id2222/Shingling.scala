@@ -16,9 +16,8 @@ object Shingling {
   val lookupTable = HashMap.empty[Int, String]
 
   def apply(k: Int, hashFun: (String) => Int, document: (String,String)): (String, SortedSet[Int]) = {
-    val shingles =  JavaConversions.iterableAsScalaIterable(Splitter.fixedLength(k).split(document._2)).toList
+    val shingles =  document._2.sliding(k, 1).toList
     val hashes = shingles.map(shingle => {lookupTable += (hashFun(shingle) -> shingle); hashFun(shingle)})
     (document._1, SortedSet(hashes: _*))
-
   }
 }

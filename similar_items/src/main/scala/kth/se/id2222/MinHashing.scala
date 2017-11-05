@@ -10,22 +10,22 @@ import scala.collection.immutable.SortedSet
 object MinHashing {
 
   def apply(n: Int, shingledData: Array[(String, List[(String, SortedSet[Int])])]): List[(String, Vector[Int])] = {
-    val rows = shingledData.map {
+    val rows = shingledData.flatMap {
       case (publisher, shingledDocs) =>
         shingledDocs.flatten {
           case (document, shingles) =>
             shingles
         }
-    }.flatten.distinct
+    }.distinct
 
-    val columns = shingledData.map {
+    val columns = shingledData.flatMap {
       case (publisher, shingledDocs) =>
         shingledDocs
-    }.flatten
+    }
 
-    val hashFuns = (0 to n - 1).map((_) => Main.universalHashing(rows.size - 1)).toList
+    val hashFuns = (0 to n - 1).map((_) => Main.universalHashing(rows.length - 1)).toList
 
-    val placeHolderMatrix = Array.tabulate(n, columns.size)((x, y) => Integer.MAX_VALUE)
+    val placeHolderMatrix = Array.tabulate(n, columns.length)((x, y) => Integer.MAX_VALUE)
 
     (0 to rows.size - 1).map((i) => {
       val rowHashes = hashFuns.map(h => h(i))
