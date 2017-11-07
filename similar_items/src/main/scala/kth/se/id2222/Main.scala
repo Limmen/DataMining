@@ -15,8 +15,8 @@ object Main {
   val a = 3 //factor
   val hashFun = (s: String) => s.hashCode //String hashfun for compression, dont care about buckets.
   val n = 100 //MinhashSignatureLength
-  val b = 20 //bands
-  val t = 0.55 //threshold
+  val b = 10 //bands
+  val t = 0.8 //threshold
   val InputDatasetPath = "src/resources/mini_newsgroups"
 
   /**
@@ -71,7 +71,6 @@ object Main {
   }
 
   /**
-   * 1
    * Generates random hash function for row permutation for minhashing.
    * Uses the universal hashing scheme from the coursebook.
    * Universal hashing: h(x) = ((a*x + b) mod p) mod N where a,b are random integers,
