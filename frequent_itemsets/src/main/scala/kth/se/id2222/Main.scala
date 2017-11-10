@@ -24,20 +24,17 @@ object Main {
     val baskets = DataUtils.readData(dataPath)
     println("Counting all singletons for " + baskets.size + " baskets")
     frequentItemSets += (1 -> filterItemSets(Apriori.firstPass(baskets), supportThreshold))
-<<<<<<< HEAD
     println("Signletons " + frequentItemSets(1).size)
     for(i <- 2 to k){
-      println("Processing " + i)
-      frequentItemSets += (i -> filterItemSets(Apriori.kthPass(i, supportThreshold, frequentItemSets(i-1), baskets), supportThreshold))
-      //assocRules += (i -> AssocRules.findAllRules(supportThreshold, confidenceThreshold, frequentItemSets(i)))
-=======
-    val countedItems = Apriori.firstPass(baskets)
-    for(i <- (2 to k)){
-      frequentItemSets += (i -> Apriori.kthPass(i, supportThreshold, frequentItemSets(i-1)))
-      assocRules += (i -> AssocRules.findAllRules(i, supportThreshold, confidenceThreshold, frequentItemSets(i), frequentItemSets(i-1), baskets))
->>>>>>> cc9788ed05bbedc127e04ce318c3d7878712c4f7
+      println("Processing frequent items for " + i + " k sets")
+      val prev = frequentItemSets(i-1)
+      println("Finding frequent items for " + Math.pow(prev.length, 2) / 2 + " k sets")
+      frequentItemSets += (i -> filterItemSets(Apriori.kthPass(i, supportThreshold, prev, baskets), supportThreshold))
+      println("Finding rules for " + i)
+      assocRules += (i -> AssocRules.findAllRules(supportThreshold, confidenceThreshold, prev, frequentItemSets(i), baskets))
     }
-    print("Done")
+    println("Done. Evaluating")
+    evaluate(baskets)
   }
 
 
@@ -47,7 +44,7 @@ object Main {
   def evaluate(baskets: List[Basket[Int]]) : Unit = {
     for(i <- (1 to k)) {
       println(s"Number Frequent Items of length $i: ${frequentItemSets(i).length}")
-      frequentItemSets(i).foreach((p) => println(s"Item: ${p._1}, threshold: ${p._2}"))
+      //frequentItemSets(i).foreach((p) => println(s"Item: ${p._1}, threshold: ${p._2}"))
       if(i > 1){
         println(s"Number of association rules for itemsets length: $i: ${assocRules(i).length}")
         assocRules(i).foreach((ar) => println(s"Association Rule: $ar, confidence: ${AssocRules.confidence(ar, baskets)}, interest: ${AssocRules.interest(ar, baskets)}"))

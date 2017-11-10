@@ -10,6 +10,10 @@ object DataUtils {
     Source.fromFile(path).getLines.toList.map((line)=> Basket[Int](line.split(" ").map(item => Item[Int](item.toInt)).toSet))
   }
 
+  def support[A](items: Set[Item[A]], baskets: List[Basket[A]]) : Int = {
+    baskets.count((basket) => items.subsetOf(basket.items))
+  }
+
   def support[A](items: List[Set[Item[A]]], baskets: List[Basket[A]]): HashMap[Set[Item[A]],Int] = {
     val hm = new HashMap[Set[Item[A]],Int]()
     baskets.foreach { basket =>

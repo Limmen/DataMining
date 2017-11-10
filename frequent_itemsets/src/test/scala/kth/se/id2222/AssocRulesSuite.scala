@@ -16,8 +16,8 @@ class AssocRulesSuite extends FunSuite with Matchers {
   }
 
   test("findAllRules"){
-    assert(AssocRules.findAllRules(2, 2, 4.0/6.0, List((Set(Item("Cat")), 5), (Set(Item("dog")), 6)), List((Set(Item("Cat"), Item("dog")), 4)), TestData.testBaskets).length == 1)
-    assert(AssocRules.findAllRules(2, 2, 5.0/6.0, List((Set(Item("Cat")), 5), (Set(Item("dog")), 6)), List((Set(Item("Cat"), Item("dog")), 4)), TestData.testBaskets).length == 0)
-    assert(AssocRules.findAllRules(2, 8, 4.0/6.0, List((Set(Item("Cat")), 5), (Set(Item("dog")), 6)), List((Set(Item("Cat"), Item("dog")), 4)), TestData.testBaskets).length == 0)
+    assert(AssocRules.findAllRules(2, 4.0/6.0, List((Set(Item("Cat")), 5), (Set(Item("dog")), 6)), List((Set(Item("Cat"), Item("dog")), 4)), TestData.testBaskets).length == 1)
+    assert(AssocRules.findAllRules(2, 5.0/6.0, List((Set(Item("Cat")), 5), (Set(Item("dog")), 6)), List((Set(Item("Cat"), Item("dog")), 4)), TestData.testBaskets).length == 0)
+    assert(AssocRules.findAllRules(8, 4.0/6.0, List((Set(Item("Cat")), 5), (Set(Item("dog")), 6)), List((Set(Item("Cat"), Item("dog")), 4)), TestData.testBaskets).length == 0)
   }
 }

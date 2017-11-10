@@ -8,11 +8,9 @@ object Apriori {
    * Count items (use triangular matrix or triple table)
    */
   def firstPass[A](baskets: List[Basket[A]]): List[(Set[Item[A]], Int)] = {
-    val allItems = baskets.flatMap(x => Set(x.items)).distinct
-    val hm = support(allItems, baskets)
-    allItems.map{ item =>
-      (item, hm(item))
-    }
+    for {
+      item <- baskets.flatMap(x => x.items).distinct
+    } yield (Set(item), support(Set(item), baskets))
   }
 
   /**
