@@ -1,4 +1,4 @@
-package kth.se.id2222
+package kth.se.id2222.spark
 
 import scala.collection.mutable.HashMap
 

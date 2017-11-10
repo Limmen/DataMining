@@ -1,6 +1,6 @@
-package kth.se.id2222
+package kth.se.id2222.spark
 
-import DataUtils._
+import kth.se.id2222.spark.DataUtils._
 
 object Apriori {
 
@@ -8,11 +8,9 @@ object Apriori {
    * Count items (use triangular matrix or triple table)
    */
   def firstPass[A](baskets: List[Basket[A]]): List[(Set[Item[A]], Int)] = {
-    val allItems = baskets.flatMap(x => Set(x.items)).distinct
-    val hm = support(allItems, baskets)
-    allItems.map{ item =>
-      (item, hm(item))
-    }
+    for {
+      item <- baskets.flatMap(x => x.items).distinct
+    } yield (Set(item), support(Set(item), baskets))
   }
 
   /**
@@ -28,13 +26,9 @@ object Apriori {
   ): List[(Set[Item[A]], Int)] = {
     val allSingletons = countedItemSets.flatMap(x => x._1).toSet
     val setOfSets = generateAllSetsOfSizeK(k, allSingletons)
-    val hm = support(setOfSets, baskets)
-    setOfSets.map { set =>
-      (set, hm(set))
-    }
-    //for {
-    //  itemSet <- setOfSets
-    //} yield (itemSet, support(itemSet, baskets))
+    for {
+      itemSet <- setOfSets
+    } yield (itemSet, support(itemSet, baskets))
   }
 
 }
