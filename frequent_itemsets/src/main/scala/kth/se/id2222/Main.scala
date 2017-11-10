@@ -26,7 +26,7 @@ object Main {
     val countedItems = Apriori.firstPass(baskets)
     for(i <- (2 to k)){
       frequentItemSets += (i -> Apriori.kthPass(i, supportThreshold, frequentItemSets(i-1)))
-      assocRules += (i -> AssocRules.findAllRules(supportThreshold, confidenceThreshold, frequentItemSets(i)))
+      assocRules += (i -> AssocRules.findAllRules(i, supportThreshold, confidenceThreshold, frequentItemSets(i), frequentItemSets(i-1), baskets))
     }
   }
 

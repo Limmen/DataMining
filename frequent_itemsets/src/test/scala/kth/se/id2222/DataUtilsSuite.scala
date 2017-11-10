@@ -2,8 +2,7 @@ package kth.se.id2222
 
 import org.scalatest._
 
-class DataUtilsSuite extends FunSuite with Matchers {
-
+object TestData {
   val testBaskets = List(
     Basket(Set(Item("Cat"), Item("and"), Item("dog"), Item("bites"))),
     Basket(Set(Item("Yahoo"), Item("news"), Item("claims"), Item("a"), Item("Cat"), Item("mated"), Item("with"), Item("a"), Item("dog"), Item("and"), Item("produced"), Item("viable"), Item("offspring"))),
@@ -15,17 +14,22 @@ class DataUtilsSuite extends FunSuite with Matchers {
     Basket(Set(Item("Shop"), Item("for"), Item("your"), Item("show"), Item("dog"), Item("grooming"), Item("and"), Item("pet"), Item("supplies")))
   )
   val testCounted = List((Set(Item("a")), 4), (Set(Item("b")), 2), (Set(Item("c")), 8))
+}
+
+class DataUtilsSuite extends FunSuite with Matchers {
+
+
 
   test("readData") {
     assert(DataUtils.readData("src/resources/T10I4D100K.dat").length == 100000)
   }
 
   test("support") {
-    assert(Main.filterItemSets(testCounted, 3).length == 2)
-    assert(DataUtils.support(Set(Item("dog")),testBaskets) == 6)
-    assert(DataUtils.support(Set(Item("Cat")),testBaskets) == 5)
-    assert(DataUtils.support(Set(Item("and")),testBaskets) == 4)
-    assert(DataUtils.support(Set(Item("dog, and, Cat")),testBaskets) == 1)
+    assert(Main.filterItemSets(TestData.testCounted, 3).length == 2)
+    assert(DataUtils.support(Set(Item("dog")),TestData.testBaskets) == 6)
+    assert(DataUtils.support(Set(Item("Cat")),TestData.testBaskets) == 5)
+    assert(DataUtils.support(Set(Item("and")),TestData.testBaskets) == 4)
+    assert(DataUtils.support(Set(Item("dog, and, Cat")),TestData.testBaskets) == 1)
   }
 
   test("generate subsets"){
