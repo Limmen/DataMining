@@ -6,10 +6,16 @@ import scala.io.Source
 
 object DataUtils {
 
+  /*
+   * Read Data into basket-item datamodel
+   */
   def readData(path: String): List[Basket[Int]] = {
     Source.fromFile(path).getLines.toList.map((line)=> Basket[Int](line.split(" ").map(item => Item[Int](item.toInt)).toSet))
   }
 
+  /*
+   * Calcultes the support for a itemset : The number of baskets containing the item
+   */
   def support[A](items: Set[Item[A]], baskets: List[Basket[A]]) : Int = {
     baskets.count((basket) => items.subsetOf(basket.items))
   }

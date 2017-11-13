@@ -30,9 +30,6 @@ object Apriori {
     setOfSets.map { set =>
       (set, hm(set))
     }
-    //for {
-    //  itemSet <- setOfSets
-    //} yield (itemSet, support(itemSet, baskets))
   }
 
 }

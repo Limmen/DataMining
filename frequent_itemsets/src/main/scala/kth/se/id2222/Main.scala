@@ -19,18 +19,20 @@ object Main {
   val frequentItemSets = new HashMap[Int,List[(Set[Item[Int]], Int)]]()
   val assocRules = new HashMap[Int, List[AssociationRule[Int]]]()
 
+  /*
+   * Progam entrypoint, otchestrates the procesisng pipeline of finding similar itemsets and
+   * association rules
+   */
   def main(cmdlineArgs: Array[String]): Unit = {
-
     val baskets = DataUtils.readData(dataPath)
     println("Counting all singletons for " + baskets.size + " baskets")
     frequentItemSets += (1 -> filterItemSets(Apriori.firstPass(baskets), supportThreshold))
-    println("Signletons " + frequentItemSets(1).size)
+    println("Number of singletons " + frequentItemSets(1).size)
     for(i <- 2 to k){
-      println("Processing frequent items for " + i + " k sets")
       val prev = frequentItemSets(i-1)
-      println("Finding frequent items for " + Math.pow(prev.length, 2) / 2 + " k sets")
+      println("Processing frequent items for " + i + "-sets, approximately " + Math.pow(prev.length, 2) / 2 + "sets to check")
       frequentItemSets += (i -> filterItemSets(Apriori.kthPass(i, supportThreshold, prev, baskets), supportThreshold))
-      println("Finding rules for " + i)
+      println("Finding association rules for " + i + "-sets")
       assocRules += (i -> AssocRules.findAllRules(supportThreshold, confidenceThreshold, prev, frequentItemSets(i), baskets))
     }
     println("Done. Evaluating")
@@ -44,7 +46,6 @@ object Main {
   def evaluate(baskets: List[Basket[Int]]) : Unit = {
     for(i <- (1 to k)) {
       println(s"Number Frequent Items of length $i: ${frequentItemSets(i).length}")
-      //frequentItemSets(i).foreach((p) => println(s"Item: ${p._1}, threshold: ${p._2}"))
       if(i > 1){
         println(s"Number of association rules for itemsets length: $i: ${assocRules(i).length}")
         assocRules(i).foreach((ar) => println(s"Association Rule: $ar, confidence: ${AssocRules.confidence(ar, baskets)}, interest: ${AssocRules.interest(ar, baskets)}"))

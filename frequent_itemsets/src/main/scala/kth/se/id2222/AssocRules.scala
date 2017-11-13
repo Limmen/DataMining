@@ -12,14 +12,24 @@ import DataUtils._
  */
 object AssocRules {
 
+  /*
+   * Confidence: Ratio of support for (I U j) over support for I
+   */
   def confidence[A](rule: AssociationRule[A], baskets: List[Basket[A]]): Double = {
     support(rule.subject + rule.proposition, baskets).toDouble / DataUtils.support(rule.subject, baskets).toDouble
   }
 
+  /*
+   * Interest: difference between its confidence and the fraction of baskets that contain the
+   * proposition of the rule.
+   */
   def interest[A](rule: AssociationRule[A], baskets: List[Basket[A]]): Double = {
     confidence(rule, baskets) - support(Set(rule.proposition), baskets).toDouble / baskets.size.toDouble
   }
 
+  /*
+   * Find all rules with confidence over threshold
+   */
   def findAllRules[A](supportThreshold: Int,
     confidenceThreshold: Double,
     countedItemSets1: List[(Set[Item[A]], Int)],

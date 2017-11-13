@@ -2,7 +2,7 @@
 
 ## About
 
-TODO
+Implementation of the Apriori algorithm as well as mining of association rules on a sample dataset.
 
 ## How to run
 
