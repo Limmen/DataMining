@@ -4,21 +4,24 @@ import java.util.concurrent.ThreadLocalRandom
 import scala.collection.mutable.{ HashMap, Set }
 import scala.util.Random
 
+/*
+ * Implementation of Triest-Improved
+ * Paper: http://www.kdd.org/kdd2016/papers/files/rfp0465-de-stefaniA.pdf
+ */
 object Triest {
 
   val sample: Set[Edge] = Set.empty
   var t = 0
   var tau = 0
-  val M = 6
+  val M = 750
   val rnd = new Random()
-  val localCounts = new HashMap[Vertex, Int]()
+  val localCounts = new HashMap[Vertex, Double]()
 
   def streamingEvent(edge: Edge): Unit = {
     t += 1
-    println(s"sample size: ${sample.size}, t: ${t}, tau: ${tau}")
+    updateCounters(PlusEdge, edge)
     if (sampleEdge(edge)) {
       sample += edge
-      updateCounters(PlusEdge, edge)
     }
   }
 
@@ -26,28 +29,25 @@ object Triest {
     if (t <= M) {
       return true
     } else if(flipBiasedCoin(M/t.toDouble)) {
-      println("heads")
       val randomEdge = sample.toVector(rnd.nextInt(sample.size))
       sample -= randomEdge
-      updateCounters(MinusEdge, edge)
+      //updateCounters(MinusEdge, edge)
       return true
     }
-    println("tails")
     return false
   }
 
   def updateCounters(symb: Symbol, edge: Edge): Unit = {
     val combinedNeighboorhood = getNeighborHood(edge.node1) intersect getNeighborHood(edge.node2)
-    println(s"combinedNeighborHood, ${combinedNeighboorhood.size}")
     combinedNeighboorhood.foreach(c => {
       symb match {
         case PlusEdge => {
           tau += 1
           List(c, edge.node1, edge.node2).foreach(c2 => {
             if(localCounts isDefinedAt c2){
-              localCounts += (c2 -> (localCounts(c2) + 1))
+              localCounts += (c2 -> (localCounts(c2) + estimateFactor()))
             } else {
-              localCounts += (c2 -> 1)
+              localCounts += (c2 -> estimateFactor())
             }
           })
         }
