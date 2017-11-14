@@ -15,7 +15,7 @@ object Main {
   val dataPath = "src/resources/T10I4D100K.dat"
   val supportThreshold: Int = 1000
   val confidenceThreshold = 0.5
-  val k = 2
+  val k = 4
   val frequentItemSets = new HashMap[Int,List[(Set[Item[Int]], Int)]]()
   val assocRules = new HashMap[Int, List[AssociationRule[Int]]]()
 
@@ -30,7 +30,7 @@ object Main {
     println("Number of singletons " + frequentItemSets(1).size)
     for(i <- 2 to k){
       val prev = frequentItemSets(i-1)
-      println("Processing frequent items for " + i + "-sets, approximately " + Math.pow(prev.length, 2) / 2 + "sets to check")
+      println("Processing frequent items for " + i + "-sets, approximately " + Math.pow(prev.length, 2) / 2 + " sets to check")
       frequentItemSets += (i -> filterItemSets(Apriori.kthPass(i, supportThreshold, prev, baskets), supportThreshold))
       println("Finding association rules for " + i + "-sets")
       assocRules += (i -> AssocRules.findAllRules(supportThreshold, confidenceThreshold, prev, frequentItemSets(i), baskets))

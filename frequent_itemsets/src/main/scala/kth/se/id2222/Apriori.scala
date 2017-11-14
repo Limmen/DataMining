@@ -28,8 +28,11 @@ object Apriori {
     val setOfSets = generateAllSetsOfSizeK(k, allSingletons)
     val hm = support(setOfSets, baskets)
     setOfSets.map { set =>
-      (set, hm(set))
+      if (hm isDefinedAt set) {
+        (set, hm(set))
+      } else {
+        (set, 0)
+      }
     }
   }
-
 }

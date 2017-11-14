@@ -24,11 +24,12 @@ object DataUtils {
     val hm = new HashMap[Set[Item[A]],Int]()
     baskets.foreach { basket =>
       items.foreach { item =>
-        if (item.subsetOf(basket.items))
+        if (item.subsetOf(basket.items)) {
           if(hm isDefinedAt item)
             hm += (item -> (hm(item) + 1))
           else
             hm += (item -> 1)
+        }
       }
     }
     hm
