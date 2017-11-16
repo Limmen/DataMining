@@ -1,8 +1,8 @@
-# Discovery of Frequent Itemsets and Association Rules
+# Mining Data Streams - Triest Reservoir Sampling
 
 ## About
 
-Implementation of the Apriori algorithm as well as mining of association rules on a sample dataset.
+Implementation of the Triest-Impr Reservoir sampling technique for estimating triangle counts on the E-road dataset.
 
 ## How to run
 

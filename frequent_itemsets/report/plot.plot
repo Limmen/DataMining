@@ -11,4 +11,4 @@ set ylabel "amount (log scale)"
 set logscale y 2
 set title "Benchmarks"
 set offset -0.3,-0.3,30,0.0
-plot for [COL=2:4] 'data3.dat' using COL:xticlabels(1) title columnheader
+plot for [COL=2:5] 'data3.dat' using COL:xticlabels(1) title columnheader
