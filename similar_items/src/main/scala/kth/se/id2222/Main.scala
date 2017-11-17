@@ -16,7 +16,7 @@ object Main {
   val hashFun = (s: String) => s.hashCode //String hashfun for compression, dont care about buckets.
   val n = 100 //MinhashSignatureLength
   val b = 10 //bands
-  val t = 0.8 //threshold
+  val t = 0.8 //threshold : (1/b)^(1/r)
   val InputDatasetPath = "src/resources/mini_newsgroups"
 
   /**

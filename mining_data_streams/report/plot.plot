@@ -5,10 +5,10 @@ set style fill solid border rgb "black"
 set boxwidth 0.8
 set style data histograms
 
-set xlabel "k"
+set xlabel "Reservoir sample size"
 set autoscale
-set ylabel "amount (log scale)"
-set logscale y 2
+set ylabel "Number of triangles"
 set title "Benchmarks"
 set offset -0.3,-0.3,30,0.0
-plot for [COL=2:4] 'data3.dat' using COL:xticlabels(1) title columnheader
+set yrange [0:50];
+plot for [COL=2:3] 'data3.dat' using COL:xticlabels(1) title columnheader
