@@ -18,18 +18,26 @@
     "art11"
     "inputenc"
     "fontenc"
+    "fixltx2e"
     "graphicx"
-    "grffile"
     "longtable"
+    "float"
     "wrapfig"
     "rotating"
     "ulem"
     "amsmath"
     "textcomp"
+    "marvosym"
+    "wasysym"
     "amssymb"
-    "capt-of"
     "hyperref")
    (LaTeX-add-labels
-    "sec:orge3faa1f"))
+    "sec-1"
+    "sec-2"
+    "sec-3"
+    "sec-4"
+    "sec-5"
+    "sec-6"
+    "sec-7"))
  :latex)
 

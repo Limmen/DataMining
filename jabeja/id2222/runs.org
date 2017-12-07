@@ -1,41 +1,91 @@
 * Test runs
 
-*Not reproducible always due to randomness...*
+
+* Task 1 - Linear Simulated Annealing, no restarts, no randomness
 
 Example command:
 #+begin_src bash
-./run.sh -graph ./graphs/3elt.graph -rounds 1000 -numPartitions 4 -temp 1 -delta 0.0001 -restart 0.000001
+./run.sh -graph ./graphs/3elt.graph -rounds 1000 -numPartitions 4 -temp 2 -delta 0.003 -alpha 2 -nodeSelectionPolicy HYBRID
 #+end_src
 
-| graph   |   delta | T | edge-cut | rounds |    swaps | migrations | partitions | task | restart   | converge |
-|---------+---------+---+----------+--------+----------+------------+------------+------+-----------+----------|
-| add20   |   0.003 | 2 |     2095 |   1000 |  1090263 |       1751 |          4 |    1 | no        | yes      |
-| 3elt    |   0.003 | 2 |     2604 |   1000 |  1580209 |       3328 |          4 |    1 | no        | yes      |
-| twitter |   0.003 | 2 |    11640 |   1000 |  1911962 |       1368 |          4 |    1 | no        | yes      |
-| add20   |   0.003 | 1 |     2288 |   1000 |   563676 |       1709 |          4 |    2 | no        | yes      |
-| add20   |  0.0001 | 1 |     2101 |   1000 |   341359 |       1739 |          4 |    2 | no        | no       |
-| add20   | 0.00001 | 1 |     2310 |   1000 |   624513 |       1707 |          4 |    2 | no        | yes      |
-| add20   |  0.0005 | 1 |     2188 |   1000 |   492078 |       1755 |          4 |    2 | no        | no       |
-| add20   |  0.0003 | 1 |     2078 |   1000 |   373724 |       1742 |          4 |    2 | no        | no       |
-| add20   | 0.00035 | 1 |     1964 |   1000 |   446372 |       1733 |          4 |    2 | no        | no       |
-| 3elt    |   0.003 | 1 |     2052 |   1000 |   103477 |       3238 |          4 |    2 | no        | yes      |
-| 3elt    |    0.03 | 1 |     2269 |   1000 |   158340 |       3281 |          4 |    2 | no        | yes      |
-| 3elt    |  0.0005 | 1 |     2125 |   1000 |    85937 |       3282 |          4 |    2 | no        | yes      |
-| 3elt    |  0.0001 | 1 |     1986 |   1000 |    78775 |       3293 |          4 |    2 | no        | yes      |
-| 3elt    | 0.00001 | 1 |     2198 |   1000 |    69558 |       3255 |          4 |    2 | no        | yes      |
-| twitter |   0.003 | 1 |    41172 |   1000 |    48846 |       2038 |          4 |    2 | no        | yes      |
-| twitter |   0.003 | 1 |    41162 |   1000 |    33330 |       2034 |          4 |    2 | no        | yes      |
-| twitter |   0.003 | 1 |    41137 |   1000 |    28261 |       2053 |          4 |    2 | no        | yes      |
-| add20   | 0.00035 | 1 |     2259 |   1000 |  2256736 |       1738 |          4 |    2 | 0.000001  | no       |
-| add20   | 0.00035 | 1 |     2335 |   1000 |  2256592 |       1731 |          4 |    2 | 0.00001   | no       |
-| 3elt    |  0.0001 | 1 |     1862 |   1000 |  4266873 |       3323 |          4 |    2 | 0.000001  | no       |
-| 3elt    |  0.0001 | 1 |     1949 |   1000 |  4266873 |       3366 |          4 |    2 | 0.00001   | no       |
-| 3elt    |  0.0001 | 1 |     1913 |   1000 |  4268350 |       3342 |          4 |    2 | 0.0000001 | no       |
-| 3elt    | 0.00001 | 1 |     1784 |   1000 |  4153016 |       3315 |          4 |    2 | 0.000001  | no       |
-| 3elt    | 0.00001 | 1 |     1152 |   5000 | 20693110 |       3346 |          4 |    2 | 0.000001  | no       |
-| twitter | 0.00001 | 1 |    41333 |   1000 |  1643924 |       2038 |          4 |    2 | 0.000001  | yes      |
-| twitter |   0.003 | 1 |    41098 |   1000 |  2477857 |       2039 |          4 |    2 | 0.000001  | yes      |
-| twitter |   0.003 | 1 |    41109 |   1000 |  2486813 |       2033 |          4 |    2 | 0.001     | yes      |
-| twitter |   0.003 | 1 |    41109 |   1000 |  2486813 |       2033 |          4 |    2 | 0.001     | yes      |
-| twitter |    0.01 | 1 |    41157 |   1000 |  2522306 |       2044 |          4 |    2 | 1         | yes      |
-| twitter |  0.0001 | 1 |    41210 |   1000 |  2415701 |       2027 |          4 |    2 | 1         | yes      |
+| graph   | delta | T | edge-cut | rounds |   swaps | migrations | partitions | converge | alpha | policy |
+|---------+-------+---+----------+--------+---------+------------+------------+----------+-------+--------|
+| add20   | 0.003 | 2 |     2095 |   1000 | 1090263 |       1751 |          4 | yes      |     2 | hybrid |
+| 3elt    | 0.003 | 2 |     2604 |   1000 | 1580209 |       3328 |          4 | yes      |     2 | hybrid |
+| twitter | 0.003 | 2 |    41156 |   1000 |  899515 |       2049 |          4 | yes      |     2 | hybrid |
+
+* Task 2.1 - Linear Simulated annealing, no restarts, randomness and acceptance probability
+
+Example command:
+
+#+begin_src bash
+./run.sh -graph ./graphs/add20.graph -rounds 1000 -numPartitions 4 -temp 1 -delta 0.003 -alpha 2 -nodeSelectionPolicy HYBRID
+#+end_src
+| graph   | delta | T | edge-cut | rounds |  swaps | migrations | partitions | converge | alpha | policy |
+|---------+-------+---+----------+--------+--------+------------+------------+----------+-------+--------|
+| 3elt    | 0.003 | 1 |     2190 |   1000 | 103586 |       3274 |          4 | yes      |     2 | hybrid |
+| add20   | 0.003 | 1 |     2060 |   1000 | 373826 |       1745 |          4 | yes      |     2 | hybrid |
+| twitter | 0.003 | 1 |    41115 |   1000 |  48804 |       2046 |          4 | yes      |     2 | hybrid |
+
+* Task 2.2 - Linear Simulated annealing with restarts, randomness and acceptance probability
+
+Example command:
+#+begin_src bash
+./run.sh -graph ./graphs/add20.graph -rounds 1000 -numPartitions 4 -temp 1 -delta 0.003 -restart 0.000001 -alpha 2 -nodeSelectionPolicy HYBRID
+#+end_src
+| graph   | delta | T | edge-cut | rounds |   swaps | migrations | partitions | converge | alpha | policy | restart |
+|---------+-------+---+----------+--------+---------+------------+------------+----------+-------+--------+---------|
+| 3elt    | 0.003 | 1 |     2037 |   1000 | 4463446 |       3296 |          4 | no       |     2 | hybrid |       1 |
+| add20   | 0.003 | 1 |     2348 |   1000 | 2303961 |       1746 |          4 | no       |     2 | hybrid |       1 |
+| twitter | 0.003 | 1 |    41147 |   1000 | 2494681 |       2049 |          4 | yes      |     2 | hybrid |       1 |
+
+* Task 2.3 Exponential simulated annealing with restarts, randomness and acceptance probability
+Example command:
+
+#+begin_src bash
+./run.sh -graph ./graphs/add20.graph -rounds 1000 -numPartitions 4 -temp 1 -delta 0.003 -restart 0.000001 -alpha 2 -nodeSelectionPolicy HYBRID
+#+end_src
+| graph   | delta | T | edge-cut | rounds |   swaps | migrations | partitions | converge | alpha | policy | restart |
+|---------+-------+---+----------+--------+---------+------------+------------+----------+-------+--------+---------|
+| 3elt    | 0.003 | 1 |     2504 |   1000 | 4713193 |       3328 |          4 | no       |     2 | hybrid |       1 |
+| add20   | 0.003 | 1 |     2471 |   1000 | 2392641 |       1679 |          4 | no       |     2 | hybrid |       1 |
+| twitter | 0.003 | 1 |    41327 |   1000 | 2636468 |       2045 |          4 | yes      |     2 | hybrid |       1 |
+
+* Task 2.4 Exponential simulated annealing with restarts, randomness and acceptance probability - Parameter tuning
+Example command:
+
+#+begin_src bash
+./run.sh -graph ./graphs/add20.graph -rounds 1000 -numPartitions 4 -temp 1 -delta 0.003 -restart 0.000001 -alpha 2 -nodeSelectionPolicy HYBRID
+#+end_src
+| graph   |   delta | T | edge-cut | rounds |     swaps | migrations | partitions | converge | alpha | policy | restart |
+|---------+---------+---+----------+--------+-----------+------------+------------+----------+-------+--------+---------|
+| 3elt    | 0.00001 | 1 |     1021 |  10000 |  42010302 |       3441 |          4 | no       |     2 | hybrid |       1 |
+| 3elt    | 0.00001 | 1 |     1208 |  10000 |  42541398 |       3425 |          4 | no       |     1 | hybrid |       1 |
+| 3elt    |   0.003 | 1 |     1011 |  10000 |  44596460 |       3422 |          4 | no       |     2 | hybrid |       1 |
+| 3elt    |   0.003 | 1 |      731 |  50000 | 222928227 |       3435 |          4 | yes      |     2 | hybrid |       1 |
+| add20   | 0.00001 | 1 |     2196 |  10000 |  22126510 |       1753 |          4 | no       |     2 | hybrid |       1 |
+| add20   | 0.00001 | 1 |     1792 |  10000 |  21773341 |       1757 |          4 | yes      |     1 | hybrid |       1 |
+| add20   |   0.003 | 1 |     1780 |  10000 |  22704110 |       1734 |          4 | yes      |     1 | hybrid |       1 |
+| twitter | 0.00001 | 1 |    41258 |   2000 |   4739316 |       2046 |          4 | yes      |     2 | hybrid |       1 |
+| twitter |   0.003 | 1 |    40841 |   2000 |   5000891 |       2043 |          4 | yes      |     1 | hybrid |       1 |
+
+* Bonus Momentum + Simulated Annealing
+Example command:
+
+#+begin_src bash
+./run.sh -graph ./graphs/twitter.graph -rounds 1000 -numPartitions 4 -temp 1 -delta 0.003 -alpha 1 -nodeSelectionPolicy HYBRID -momentum 0.001
+
+#+end_src
+| graph   | delta | T | edge-cut | rounds |     swaps | migrations | partitions | converge | alpha | policy | momentum |
+|---------+-------+---+----------+--------+-----------+------------+------------+----------+-------+--------+----------|
+| 3elt    | 0.003 | 1 |     1256 |   1000 |   4280889 |       3420 |          4 | no       |     2 | hybrid |    0.001 |
+| 3elt    | 0.003 | 1 |     5139 |   1000 |   4685823 |       3535 |          4 | no       |     2 | hybrid |       10 |
+| 3elt    | 0.003 | 1 |     1344 |   1000 |   4281498 |       3397 |          4 | no       |     2 | hybrid |   0.0001 |
+| 3elt    | 0.003 | 1 |      697 |  10000 |  42315849 |       3457 |          4 | no       |     2 | hybrid |    0.001 |
+| 3elt    | 0.003 | 1 |      518 |  50000 | 210569840 |       3463 |          4 | yes      |     2 | hybrid |    0.001 |
+| add20   | 0.003 | 1 |     2095 |   1000 |   2294945 |       1815 |          4 | no       |     2 | hybrid |    0.001 |
+| add20   | 0.003 | 1 |     1997 |  10000 |  22776283 |       1785 |          4 | yes      |     1 | hybrid |  0.00001 |
+| twitter | 0.003 | 1 |    41137 |   1000 |   2485027 |       2034 |          4 | yes      |     2 | hybrid |    0.001 |
+| twitter | 0.003 | 1 |    40878 |   1000 |   2498748 |       2035 |          4 | yes      |     1 | hybrid |    0.001 |
+| twitter | 0.003 | 1 |    40833 |   1000 |   2488748 |       2041 |          4 | yes      |     1 | hybrid |   0.0001 |
+| twitter | 0.003 | 1 |    41436 |   1000 |   2490911 |       2068 |          4 | yes      |     1 | hybrid |   0.00001 |

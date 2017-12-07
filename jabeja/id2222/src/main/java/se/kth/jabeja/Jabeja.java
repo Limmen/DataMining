@@ -20,6 +20,7 @@ public class Jabeja {
     private float T;
     private boolean resultFileCreated = false;
     private Random rnd = new Random();
+    private float previousBenefit = 0;
 
     //-------------------------------------------------------------------
     public Jabeja(HashMap<Integer, Node> graph, Config config) {
@@ -51,10 +52,12 @@ public class Jabeja {
      */
     private void saCoolDown() {
         //simulated annealing
+        /*
         if (T == 0)
             T = config.getRestart();
+            */
         T = config.getDelta() * T;
-
+        //T =  T* (float) Math.pow(config.getDelta(), T/round);
         //Old linear cooldown
 /*
         if (T > 1)
@@ -115,20 +118,31 @@ public class Jabeja {
             double newSum = Math.pow(dpq, config.getAlpha().doubleValue()) + Math.pow(dqp, config.getAlpha().doubleValue());
 
             //Task 1
-            /*
+/*
             if ((newSum * T > old) && (newSum > highestBenefit)) {
                 bestPartner = entireGraph.get(q);
                 highestBenefit = newSum;
             }
-           */
-            //Task 2
+*/
 
+            //Task 2
+/*
             double acceptanceProbability = acceptanceProbability(old, newSum);
             if ((acceptanceProbability > rnd.nextDouble()) && (newSum > highestBenefit)) {
                 bestPartner = entireGraph.get(q);
                 highestBenefit = newSum;
             }
+  */
+            //Bonus
+            float momentum = Math.max(0, config.getMomentum() * (float) (newSum  - previousBenefit));
+
+            double acceptanceProbability = acceptanceProbability(old, momentum + newSum);
+            if ((acceptanceProbability > rnd.nextDouble()) && (newSum > highestBenefit)) {
+                bestPartner = entireGraph.get(q);
+                highestBenefit = newSum;
+            }
         }
+        previousBenefit = (float) highestBenefit;
         return bestPartner;
     }
 

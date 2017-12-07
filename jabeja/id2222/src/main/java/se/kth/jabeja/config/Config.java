@@ -14,6 +14,7 @@ public class Config {
   private NodeSelectionPolicy nodeSelectionPolicy;
   private Float alpha;
   private Float restart;
+  private Float momentum;
 
   public Config setAlpha(Float alpha) {
     this.alpha = alpha;
@@ -169,6 +170,15 @@ public class Config {
 
   public Config setRestart(Float restart) {
     this.restart = restart;
+    return this;
+  }
+
+  public Float getMomentum() {
+    return momentum;
+  }
+
+  public Config setMomentum(Float momentum) {
+    this.momentum = momentum;
     return this;
   }
 }

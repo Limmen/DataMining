@@ -60,6 +60,9 @@ public class CLI {
   @Option(name = "-restart", usage = "restart temperature")
   private static float RESTART = (float) 0.000001;
 
+  @Option(name = "-momentum", usage = "momentum coefficient")
+  private static float MOMENTUM = (float) 1.0;
+
   public Config parseArgs(String[] args) throws FileNotFoundException {
     CmdLineParser parser = new CmdLineParser(this);
     parser.setUsageWidth(80);
@@ -114,6 +117,7 @@ public class CLI {
             .setGraphInitialColorPolicy(graphInitColorSelectionPolicy)
             .setOutputDir(OUTPUT_DIR)
             .setRestart(RESTART)
-            .setAlpha(ALPHA);
+            .setAlpha(ALPHA)
+            .setMomentum(MOMENTUM);
   }
 }
