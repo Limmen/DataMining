@@ -89,3 +89,8 @@ Example command:
 | twitter | 0.003 | 1 |    40878 |   1000 |   2498748 |       2035 |          4 | yes      |     1 | hybrid |    0.001 |
 | twitter | 0.003 | 1 |    40833 |   1000 |   2488748 |       2041 |          4 | yes      |     1 | hybrid |   0.0001 |
 | twitter | 0.003 | 1 |    41436 |   1000 |   2490911 |       2068 |          4 | yes      |     1 | hybrid |   0.00001 |
+
+
+/run.sh -graph ./graphs/3elt.graph -rounds 5000 -numPartitions 4 -temp 1 -delta 0.00001 -restart 0.000001 -alpha 1 -nodeSelectionPolicy HYBRID -momentum 0.001
+
+./run.sh -graph ./graphs/3elt.graph -rounds 5000 -numPartitions 4 -temp 1 -delta 0.003 -restart 1 -alpha 2 -nodeSelectionPolicy HYBRID
